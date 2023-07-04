@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <title>Web workers</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            font-weight: 400;
+            font-size: 1rem;
+            line-height: 1.5;
+            font-family: "Lato", sans-serif;
+            color: #002026
+        }
+
+        body {
+            padding: 3px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: start;
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        label {
+            font-weight: 700;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            outline-color: #00637C;
+            outline-width: 1px;
+            padding: 3px;
+        }
+
+        button {
+            padding: 5px 17px;
+            border: none;
+            border-radius: 3px;
+            color: #ffffff;
+            background-color: #00637C;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            filter: brightness(110%);
+        }
+
+        #message-dlg {
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(171 171 171 / 40%);
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        #message-dlg > div {
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 7px;
+            box-shadow: 1px 1px 7px 3px #c9c9c9;
+            width: 320px;
+            height: 180px;
+            position: relative;
+        }
+
+        #message-content {
+            color: #333333;
+        }
+
+        #message-dlg button {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<p>Learning Web Workers</p>
+
+<div class="main-content">
+<label for="input-message">Write your message</label>
+<textarea name="message" id="input-message"></textarea>
+<button type="button" onclick="sendMessage()">Send message to worker</button>
+</div>
+
+<div id="message-dlg" class="hide">
+    <div>
+        <p id="message-content"></p>
+        <button type="button" onclick="hideDlg()">Ok</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const messageDlg = document.getElementById('message-dlg')
+    const messageContent = document.getElementById('message-content')
+    const inputMessage = document.getElementById('input-message')
+
+    const worker = new Worker('worker.js')
+    worker.addEventListener('message', ({data}) => {
+        messageContent.innerText = data
+        messageDlg.classList.remove('hide')
+    })
+
+    function sendMessage() {
+        const data = inputMessage.value
+        inputMessage.value = ""
+        worker.postMessage(data)
+    }
+
+    function hideDlg() {
+        messageDlg.classList.add('hide')
+    }
+</script>
+</body>
+</html>
